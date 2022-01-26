@@ -2,6 +2,7 @@ package br.org.jprojects.restapiusers.service;
 
 import br.org.jprojects.restapiusers.dto.UserDTO;
 import br.org.jprojects.restapiusers.entity.User;
+import br.org.jprojects.restapiusers.exceptions.UserNotFoundException;
 import br.org.jprojects.restapiusers.mappers.UserMapper;
 import br.org.jprojects.restapiusers.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,12 @@ public class UserService {
         return this.userRepository.findAll().stream()
                 .map(userMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UserDTO findById(Long id) throws UserNotFoundException {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        return userMapper.toDTO(user);
     }
 }

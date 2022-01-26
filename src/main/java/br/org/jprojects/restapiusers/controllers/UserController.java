@@ -2,6 +2,7 @@ package br.org.jprojects.restapiusers.controllers;
 
 import br.org.jprojects.restapiusers.dto.UserDTO;
 import br.org.jprojects.restapiusers.entity.User;
+import br.org.jprojects.restapiusers.exceptions.UserNotFoundException;
 import br.org.jprojects.restapiusers.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("hello")
+    @GetMapping("/hello")
     public String HelloTest() {
         return "Hello World!";
     }
@@ -32,9 +33,14 @@ public class UserController {
         return userService.create(userDTO);
     }
 
-    @GetMapping("getAll")
+    @GetMapping("/getAll")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<UserDTO> getAll(){
         return userService.getAll();
+    }
+    
+    @GetMapping("/{id}")
+    public UserDTO findById(@PathVariable Long id) throws UserNotFoundException {
+        return this.userService.findById(id);
     }
 }
