@@ -25,15 +25,7 @@ public class UserService {
 
     public User create(UserDTO userDTO) {
         User convertedUser = userMapper.toModel(userDTO);
-
-        User createdUser = null;
-        try {
-        createdUser = userRepository.save(convertedUser);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return createdUser;
+        return userRepository.save(convertedUser);
     }
 
     public List<UserDTO> getAll() {
@@ -43,9 +35,23 @@ public class UserService {
     }
 
     public UserDTO findById(Long id) throws UserNotFoundException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
+        User user = validateUser(id);
         return userMapper.toDTO(user);
+    }
+
+    public void delete(Long id) throws UserNotFoundException {
+        validateUser(id);
+        userRepository.deleteById(id);
+    }
+
+    public UserDTO updateById(Long id, UserDTO userDTO) throws UserNotFoundException {
+        validateUser(id);
+        User updatedUser = userMapper.toModel(userDTO);
+        return userMapper.toDTO(userRepository.save(updatedUser));
+    }
+
+    private User validateUser(Long id) throws UserNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
